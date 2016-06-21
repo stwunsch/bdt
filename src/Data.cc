@@ -1,11 +1,14 @@
 #include <Data.h>
 #include <limits>
 #include <cmath>
+#include <iostream>
 
 void Data::addSample(std::vector<float> features, float weight, unsigned int type){
     values.push_back(features);
     weights.push_back(weight);
     types.push_back(type);
+    std::vector<unsigned int> zeros(features.size());
+    bins.push_back(zeros);
 }
 
 float Data::getFeatureValue(unsigned int iSample, unsigned int iFeature){
@@ -21,8 +24,8 @@ void Data::mapValuesToBins(unsigned int numBins){
     std::vector<float> min(getNumFeatures());
     std::vector<float> max(getNumFeatures());
     for(unsigned int i=0; i<getNumFeatures(); i++){
-        min[i] = -std::numeric_limits<float>::max();
-        max[i] = std::numeric_limits<float>::max();
+        min[i] = std::numeric_limits<float>::max();
+        max[i] = -std::numeric_limits<float>::max();
     }
     for(unsigned int iSample=0; iSample<getNumSamples(); iSample++){
         for(unsigned int iFeature=0; iFeature<getNumFeatures(); iFeature++){
@@ -36,7 +39,7 @@ void Data::mapValuesToBins(unsigned int numBins){
     for(unsigned int iFeature=0; iFeature<getNumFeatures(); iFeature++){
         mapping[iFeature].resize(numBins);
         for(unsigned int iBin=0; iBin<numBins; iBin++){
-            mapping[iFeature][iBin] = min[iFeature]+(iBin+0.5)*(max[iFeature]-min[iFeature]);
+            mapping[iFeature][iBin] = min[iFeature]+(iBin+0.5)*(max[iFeature]-min[iFeature])/(float)numBins;
         }
     }
 
@@ -55,7 +58,7 @@ void Data::mapValuesToBins(unsigned int numBins){
                 }
             }
             if(bin!=std::numeric_limits<unsigned int>::max()) bins[iSample][iFeature] = bin;
-            else throw "Mapping of bins to values failed.";
+            else std::cout << "[ERROR] Mapping values to bins failed." << std::endl;
         }
     }
 }
