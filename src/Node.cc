@@ -1,10 +1,10 @@
 #include <Node.h>
 
-Node::Node(unsigned int layer){
+Node::Node(unsigned int layer_){
     right = 0;
     left = 0;
     leaf = false;
-    layer = layer;
+    layer = layer_;
 }
 
 Node* Node::evaluateValues(std::vector<float>* features){

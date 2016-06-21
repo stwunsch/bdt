@@ -14,6 +14,8 @@ public:
     bool isLeaf(){return leaf;}
     unsigned int getType(){return type;}
     unsigned int getLayer(){return layer;}
+    Node* getRight(){return right;}
+    Node* getLeft(){return left;}
 
     // Setter
     void setCutFeature(unsigned int x){cutFeature = x;}
@@ -22,6 +24,8 @@ public:
     void setLeaf(bool x){leaf = x;}
     void setType(unsigned int x){type = x;}
     void setLayer(unsigned int x){layer = x;}
+    void setRight(Node* node){right = node;}
+    void setLeft(Node* node){left = left;}
 
     // Attach data to the node
     void addSampleIndex(unsigned int index){sampleIndexes.push_back(index);}

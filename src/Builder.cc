@@ -6,6 +6,7 @@
 Builder::Builder(Data* data_){
     data = data_;
     typeSignal = 0;
+    typeBackground = 1;
 }
 
 void Builder::build(Tree* tree){
@@ -48,6 +49,7 @@ void Builder::split(Tree* tree, Node* node){
 
     // Calculate the separation gain for each bin and feature by finding the minimal loss.
     // This gives the best cut on the features for the given binning.
+    std::cout << "Layer: " << node->getLayer() << std::endl;
     float minLoss = std::numeric_limits<float>::max();
     unsigned int bestBin, bestFeature;
     float purityLeft, purityRight, loss;
@@ -65,9 +67,48 @@ void Builder::split(Tree* tree, Node* node){
         }
     }
 
-    if(bestBin==0 || bestBin==data->getNumBins()-1) std::cout << "[ERROR] Cutting failed." << std::endl;
+    // Make this node a leaf node if the cutting failed.
+    // As well, make this node a leaf node if the depth of the tree
+    // is reached.
+    // Determine to node type by choosing the greater number of signal or
+    // background.
+    if(node->getLayer()==tree->getDepth()){
+        node->setLeaf(true);
+        unsigned int sumSig = 0;
+        unsigned int sumBkg = 0;
+        for(unsigned int iSampleIndex=0; iSampleIndex<sampleIndexes->size(); iSampleIndex++){
+            iSample = sampleIndexes->at(iSampleIndex);
+            if(data->getType(iSample)==typeSignal) sumSig++;
+            else sumBkg++;
+        }
+        if(sumSig>sumBkg) node->setType(typeSignal);
+        else node->setType(typeBackground);
+        return;
+    }
 
-    // Create two new nodes if the depth of the tree is not reached
-    // and attach data samples (indexes) to the nodes. Then split
-    // recursively on them.
+    std::cout << "Best feature/bin: " << bestFeature << " " << bestBin << std::endl;
+
+    // Otherwise, set the cut values and split into two new nodes in the next
+    // layer and append the appropriate data to them.
+    // A node on the right contains all values which are greater than the cut.
+    node->setCutFeature(bestFeature);
+    node->setCutBin(bestBin);
+    node->setCutValue(data->getValueFromBin(bestFeature, bestBin));
+
+    Node* right = new Node(node->getLayer()+1);
+    Node* left = new Node(node->getLayer()+1);
+    node->setRight(right);
+    node->setLeft(left);
+    for(unsigned int iSampleIndex=0; iSampleIndex<sampleIndexes->size(); iSampleIndex++){
+        iSample = sampleIndexes->at(iSampleIndex);
+        if(data->getFeatureBin(iSample, bestFeature)>bestBin) right->addSampleIndex(iSample);
+        else left->addSampleIndex(iSample);
+    }
+
+    std::vector<unsigned int>* x = right->getSampleIndexes();
+    std::vector<unsigned int>* y = left->getSampleIndexes();
+    std::cout << "Right/left: " << x->size() << " " << y->size() << std::endl;
+
+    split(tree, right);
+    split(tree, left);
 }

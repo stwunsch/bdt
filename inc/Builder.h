@@ -10,10 +10,12 @@ public:
 
     // Getter
     unsigned int getTypeSignal(){return typeSignal;}
+    unsigned int getTypeBackground(){return typeBackground;}
 
     // Setter
     void setData(Data* x){data = x;}
     void setTypeSignal(unsigned int x){typeSignal = x;}
+    void setTypeBackground(unsigned int x){typeSignal = x;}
 
     // Building
     void build(Tree*);
@@ -24,4 +26,5 @@ public:
 private:
     Data* data;
     unsigned int typeSignal;
+    unsigned int typeBackground;
 };
