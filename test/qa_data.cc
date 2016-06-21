@@ -26,11 +26,11 @@ int main(void){
     counter = 0;
     for(unsigned int i=0; i<numSamples; i++){
         for(unsigned int j=0; j<numFeatures; j++){
-            if(data->getFeature(i, j)!=counter) return 1;
+            if(data->getFeatureValue(i, j)!=counter) return 1;
             counter++;
         }
-        if(data->getWeight(i)!=data->getFeature(i,0)/counter) return 1;
-        if(data->getType(i)!=(int)data->getFeature(i,0)%2) return 1;
+        if(data->getWeight(i)!=data->getFeatureValue(i,0)/counter) return 1;
+        if(data->getType(i)!=(int)data->getFeatureValue(i,0)%2) return 1;
     }
 
     return 0;

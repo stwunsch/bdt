@@ -1,25 +1,30 @@
 #pragma once
 
+#include <vector>
+
 class Node{
 public:
     // Constructors & destructors
     Node();
 
     // Getter
-    unsigned int getCutVariable(){return cutVariable;}
-    float getCutValue(){return cutVariable;}
+    unsigned int getCutFeature(){return cutFeature;}
     float getCutBin(){return cutBin;}
+    float getCutValue(){return cutValue;}
 
     // Setter
-    void setCutVariable(unsigned int x){cutVariable = x;}
+    void setCutFeature(unsigned int x){cutFeature = x;}
+    void setCutBin(unsigned int x){cutBin = x;}
     void setCutValue(float x){cutValue = x;}
-    void setCutBin(unsigned int x){cutValue = x;}
+
+    // Evaluate features
+    Node* evaluateValues(std::vector<float>* features);
+    Node* evaluateBins(std::vector<unsigned int>* bins);
 
 private:
-    unsigned int cutVariable; // variable which is used for the cut
-    float cutValue; // cut value for the cut variable
-    unsigned int cutBin; // bin which is mapped to the cutVariable during training
-    Node* parent; // parent node
+    unsigned int cutFeature; // feature which is used for the cut
+    unsigned int cutBin; // bin which is mapped to value on which is cut
+    float cutValue; // value on which is cut (mapped on bins during training)
     Node* right; // next node on the right
     Node* left; // next node on the left
 };
