@@ -47,9 +47,18 @@ void Builder::split(Tree* tree, Node* node){
 
     // Calculate the separation gain for each bin and feature
     float maxGain = -std::numeric_limits<float>::max();
-    float purity;
+    unsigned int maxBin, maxFeature;
+    float gain, purity;
     for(unsigned int iFeature=0; iFeature<data->getNumFeatures(); iFeature++){
         for(unsigned int iBin=0; iBin<data->getNumBins(); iBin++){
+            purity = hSig[iFeature][iBin]/(hSig[iFeature][iBin]+hBkg[iFeature][iBin]);
+            gain = separationGain(purity);
+            std::cout << iFeature << " " << iBin << " " << gain << std::endl;
+            if(gain>maxGain){
+                maxGain = gain;
+                maxBin = iBin;
+                maxFeature = iFeature;
+            }
         }
     }
 
