@@ -20,7 +20,6 @@ public:
 
     // Node splitting
     void split(Tree*, Node*);
-    inline float separationGain(float purity){return purity*(1.0-purity);}
 
 private:
     Data* data;

@@ -9,16 +9,18 @@ int main(void){
     Data* data = new Data();
     std::vector<float> features(2);
     std::default_random_engine de(time(0));
-    std::normal_distribution<float> ndSig(0, 1);
-    std::normal_distribution<float> ndBkg(2, 1);
+    std::normal_distribution<float> ndSig0(0, 1);
+    std::normal_distribution<float> ndBkg0(5, 1);
+    std::normal_distribution<float> ndSig1(0, 1);
+    std::normal_distribution<float> ndBkg1(10, 1);
     for(unsigned int iSample=0; iSample<numSamplesSig; iSample++){
-        features[0] = ndSig(de);
-        features[1] = ndSig(de);
+        features[0] = ndSig0(de);
+        features[1] = ndSig1(de);
         data->addSample(features, 1, 0);
     }
     for(unsigned int iSample=0; iSample<numSamplesSig; iSample++){
-        features[0] = ndBkg(de);
-        features[1] = ndBkg(de);
+        features[0] = ndBkg0(de);
+        features[1] = ndBkg1(de);
         data->addSample(features, 1, 1);
     }
     unsigned int numBins = 20;

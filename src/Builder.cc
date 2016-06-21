@@ -1,6 +1,7 @@
 #include <Builder.h>
 #include <limits>
-#include <iostream> // FIXME
+#include <iostream>
+#include <cmath>
 
 Builder::Builder(Data* data_){
     data = data_;
@@ -45,24 +46,26 @@ void Builder::split(Tree* tree, Node* node){
         }
     }
 
-    // Calculate the separation gain for each bin and feature
-    float maxGain = -std::numeric_limits<float>::max();
-    unsigned int maxBin, maxFeature;
-    float gain, purity;
+    // Calculate the separation gain for each bin and feature by finding the minimal loss.
+    // This gives the best cut on the features for the given binning.
+    float minLoss = std::numeric_limits<float>::max();
+    unsigned int bestBin, bestFeature;
+    float purityLeft, purityRight, loss;
     for(unsigned int iFeature=0; iFeature<data->getNumFeatures(); iFeature++){
         for(unsigned int iBin=0; iBin<data->getNumBins(); iBin++){
-            purity = hSig[iFeature][iBin]/(hSig[iFeature][iBin]+hBkg[iFeature][iBin]);
-            gain = separationGain(purity);
-            std::cout << iFeature << " " << iBin << " " << gain << std::endl;
-            if(gain>maxGain){
-                maxGain = gain;
-                maxBin = iBin;
-                maxFeature = iFeature;
+            purityLeft = hSig[iFeature][iBin]/(hSig[iFeature][iBin]+hBkg[iFeature][iBin]);
+            purityRight = (hSig[iFeature].back()-hSig[iFeature][iBin])/(hSig[iFeature].back()-hSig[iFeature][iBin]+hBkg[iFeature].back()-hBkg[iFeature][iBin]);
+            loss = purityLeft*(1.0-purityLeft) + purityRight*(1-purityRight);
+            if(std::isnan(loss)) loss = std::numeric_limits<float>::max();
+            if(loss<minLoss){
+                minLoss = loss;
+                bestBin = iBin;
+                bestFeature = iFeature;
             }
         }
     }
 
-    // Find the best separation and and therefore the best cut
+    if(bestBin==0 || bestBin==data->getNumBins()-1) std::cout << "[ERROR] Cutting failed." << std::endl;
 
     // Create two new nodes if the depth of the tree is not reached
     // and attach data samples (indexes) to the nodes. Then split
