@@ -24,9 +24,10 @@ class Builder:
     def __init__(self):
         self.eventSample = None
 
-    def build(self, eventSample, treeDepth, numCuts):
+    def build(self, eventSample, treeDepth, numCuts, minNodeSize):
         self.treeDepth = treeDepth
         self.numCuts = numCuts
+        self.minNodeSize = minNodeSize
         # Get tree
         tree = Tree(treeDepth)
         # Set root node of tree
@@ -98,6 +99,9 @@ class Builder:
                 eventSampleRight.append(sample)
             else:
                 eventSampleLeft.append(sample)
+        if len(eventSampleRight)<self.minNodeSize or len(eventSampleLeft)<self.minNodeSize:
+            node.setLeafClass()
+            return
         node.right = Node(node.layer+1, eventSampleRight)
         node.left = Node(node.layer+1, eventSampleLeft)
         # Split the left and right nodes again
