@@ -61,12 +61,12 @@ class Builder:
                     weight = node.eventSample[iSample][1]
                     class_ = node.eventSample[iSample][2]
                     if features[iFeature]>cuts[iFeature][iCut]:
-                        if class_ == 0:
+                        if class_ == 1:
                             numSigRight += weight
                         else:
                             numBkgRight += weight
                     else:
-                        if class_ == 0:
+                        if class_ == 1:
                             numSigLeft += weight
                         else:
                             numBkgLeft += weight

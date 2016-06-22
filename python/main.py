@@ -8,14 +8,13 @@ numEventsBkg = 10000
 eventSample = []
 for i in range(numEventsSig):
     features = [rand.normal(0, 1)]
-    eventSample.append([features, 1, 0])
-for i in range(numEventsBkg):
-    features = [rand.normal(3, 1)]
     eventSample.append([features, 1, 1])
+for i in range(numEventsBkg):
+    features = [rand.normal(2.5, 1)]
+    eventSample.append([features, 1, -1])
 
 """ Build boosted forest """
 
-#builder = Builder()
-#tree = builder.build(eventSample, 2, 20)
-booster = Booster(eventSample, 100)
+booster = Booster(eventSample, numTrees=10, treeDepth=2, numCuts=10)
+booster.train()
 

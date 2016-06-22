@@ -14,14 +14,14 @@ class Node:
         numSig = 0
         numBkg = 0
         for sample in self.eventSample:
-            if sample[2]==0:
+            if sample[2]==1:
                 numSig += 1
             else:
                 numBkg += 1
         if numSig>numBkg:
-            self.class_ = 0
-        else:
             self.class_ = 1
+        else:
+            self.class_ = -1
 
     def cut(self, features):
         if features[self.cutFeature]>self.cutValue:
